@@ -179,3 +179,36 @@ func BenchmarkSentenceFunctionString(b *testing.B) {
 		}
 	}
 }
+
+// Test that spaces after a sentence terminator (STerm) are followed by a
+// paragraph separator in the same sentence (SB10), like after ATerm.
+func TestSentenceSTermSpParaSep(t *testing.T) {
+	for _, testCase := range []struct {
+		original string
+		expected []string
+	}{
+		{"Hi! \rNext", []string{"Hi! \r", "Next"}},
+		{"Hi!\t\nNext", []string{"Hi!\t\n", "Next"}},
+		{"Hi?)  Next", []string{"Hi?)  ", "Next"}},
+		{"Hi. \rNext", []string{"Hi. \r", "Next"}},
+	} {
+		var sentences []string
+		state := -1
+		str := testCase.original
+		for len(str) > 0 {
+			var sentence string
+			sentence, str, state = FirstSentenceInString(str, state)
+			sentences = append(sentences, sentence)
+		}
+		if len(sentences) != len(testCase.expected) {
+			t.Errorf("%q: expected sentences %q, got %q", testCase.original, testCase.expected, sentences)
+			continue
+		}
+		for i := range sentences {
+			if sentences[i] != testCase.expected[i] {
+				t.Errorf("%q: expected sentences %q, got %q", testCase.original, testCase.expected, sentences)
+				break
+			}
+		}
+	}
+}

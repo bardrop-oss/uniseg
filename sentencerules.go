@@ -172,6 +172,12 @@ func sbTransitions(state, prop int) (newState int, sentenceBreak bool, rule int)
 		return sbCR, false, 100
 	case sbSB8Sp | prLF<<32:
 		return sbLF, false, 100
+	case sbSB8aSp | prSep<<32:
+		return sbSep, false, 100
+	case sbSB8aSp | prCR<<32:
+		return sbCR, false, 100
+	case sbSB8aSp | prLF<<32:
+		return sbLF, false, 100
 
 	// SB11.
 	case sbATerm | prAny<<32:
